@@ -38,4 +38,11 @@ public class SimpleCalculatorTest {
         double actual = SimpleCalculator.divide(8 , 1);
         Assert.assertEquals(actual , expected);
     }
+    @Test
+    void multiplied_byOne_returnNumber(){
+        double actual = SimpleCalculator.multiply(5,1);
+        double expected = 5.0;
+        Assert.assertEquals(actual,expected);
+    }
+
 }
