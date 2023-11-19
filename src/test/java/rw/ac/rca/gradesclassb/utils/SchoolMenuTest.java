@@ -1,8 +1,6 @@
 package rw.ac.rca.gradesclassb.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
+import org.junit.jupiter.api.Test;
 import java.time.DayOfWeek;
 
 import org.junit.jupiter.api.Test;

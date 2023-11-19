@@ -8,10 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SimpleCalculatorTest {
 
     @Test
-    void givenTwoNumbers_whenAdded_thenReturnSum(){
+    void givenTwoNumbers_whenAdded_returnSum(){
+        //given, act, assert
         int actual = SimpleCalculator.add(1,4);
         int expected  = 5;
         Assert.assertEquals(actual,expected);
+    }
+    @Test
+    public void givenZeroAndAnumber_whenAdded_returnAnumber(){
+        Assert.assertEquals(SimpleCalculator.add(0,4),4);
     }
     @Test
     void givenZeroValues_whenAdded_returnZero(){

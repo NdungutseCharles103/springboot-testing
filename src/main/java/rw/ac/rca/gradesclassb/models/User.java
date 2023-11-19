@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import rw.ac.rca.gradesclassb.dtos.CreateUserDTO;
 import rw.ac.rca.gradesclassb.enumerations.EGender;
 import rw.ac.rca.gradesclassb.enumerations.EStatus;
 
@@ -64,6 +65,20 @@ public class User {
     @Column(name = "activation_code")
     private String activationCode;
 
+    private String fullName;
+
+    private boolean deletedFlag;
+
+    private String credentialsExpiryDate;
+
+    private boolean isAccountExpired;
+
+    private boolean isCredentialsExpired;
+
+    private boolean isAccountEnabled;
+
+    private boolean isAccountLocked;
+
     // Define the many-to-many relationship with roles
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -72,4 +87,13 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    public User(CreateUserDTO dto) {
+        this.email = dto.getEmailAddress();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.firstName = dto.getFirstName();
+        this.lastName = dto.getLastName();
+        this.gender = dto.getGender();
+        this.fullName = dto.getFirstName()+" "+dto.getLastName();
+    }
 }

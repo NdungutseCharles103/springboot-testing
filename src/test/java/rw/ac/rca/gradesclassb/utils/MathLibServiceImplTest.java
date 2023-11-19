@@ -11,7 +11,6 @@ import rw.ac.rca.gradesclassb.repositories.IMathLibRepository;
 import rw.ac.rca.gradesclassb.services.MathLibServiceImpl;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -37,7 +36,6 @@ public class MathLibServiceImplTest {
     public void getAll_shouldReturnMathLibs() {
         when(mathLibRepositoryMock.findAll()).thenReturn(Arrays.asList(new MathLib(2.0, 3.0), new MathLib(4.5, 6.0)));
         Assert.assertEquals(mathLibService.getAll().size(), 2);
-//        Assert.assertEquals(mathLibService.getAll().get(0).getSum(), Optional.of(5.0));
 //        Assert.assertEquals(mathLibService.getAll().get(1).getSum(), Optional.of(10.5));
     }
 }
