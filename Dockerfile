@@ -7,6 +7,8 @@ RUN mvn clean package -DskipTests
 
 #pull cockroachdb cert
 RUN curl --create-dirs -o $HOME/.postgresql/root.crt 'https://cockroachlabs.cloud/clusters/73a60cd8-555c-41a3-8c5a-5efa30628deb/cert'
+# copy to root
+RUN cp $HOME/.postgresql/root.crt /root/.postgresql/root.crt
 
 # Create the final image with the packaged JAR
 FROM openjdk:17
