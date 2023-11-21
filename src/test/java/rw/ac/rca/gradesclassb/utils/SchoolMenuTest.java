@@ -5,6 +5,9 @@ import java.time.DayOfWeek;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 public class SchoolMenuTest {
     @Test
     void whenSunday_schoolMenu_shouldBeMaize(){
