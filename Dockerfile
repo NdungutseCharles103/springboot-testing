@@ -5,6 +5,9 @@ COPY . .
 # clean package and skip tests
 RUN mvn clean package -DskipTests
 
+#pull cockroachdb cert
+RUN curl --create-dirs -o $HOME/.postgresql/root.crt $COCKROACHDB_CERT_URL
+
 # Create the final image with the packaged JAR
 FROM openjdk:17
 WORKDIR /app
