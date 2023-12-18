@@ -9,23 +9,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import rw.ac.rca.gradesclassb.dtos.CreateUserDTO;
 import rw.ac.rca.gradesclassb.enumerations.EStatus;
-import rw.ac.rca.gradesclassb.exceptions.BadRequestAlertException;
 import rw.ac.rca.gradesclassb.exceptions.DuplicateRecordException;
 import rw.ac.rca.gradesclassb.exceptions.ResourceNotFoundException;
-import rw.ac.rca.gradesclassb.models.Item;
 import rw.ac.rca.gradesclassb.models.Role;
 import rw.ac.rca.gradesclassb.models.User;
 import rw.ac.rca.gradesclassb.repositories.IRoleRepository;
 import rw.ac.rca.gradesclassb.repositories.IUserRepository;
-import rw.ac.rca.gradesclassb.security.JwtTokenProvider;
 import rw.ac.rca.gradesclassb.services.IUserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,11 +31,8 @@ import java.util.UUID;
 public class UserServiceImpl implements IUserService {
     private final IUserRepository userRepository;
 
-
     private final IRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    private final JwtTokenProvider jwtService;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -80,6 +72,7 @@ public class UserServiceImpl implements IUserService {
         userAccount.setAccountExpired(false);
         userAccount.setAccountLocked(false);
         userAccount.setDeletedFlag(false);
+        userAccount.setRoles(Collections.singleton(item));
         this.userRepository.save(userAccount);
 
         return userAccount;

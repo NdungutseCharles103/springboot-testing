@@ -5,35 +5,40 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import rw.ac.rca.gradesclassb.dtos.CreateUserDTO;
+import rw.ac.rca.gradesclassb.dtos.SignInDTO;
 import rw.ac.rca.gradesclassb.dtos.UpdateItemDto;
+import rw.ac.rca.gradesclassb.enumerations.EGender;
+import rw.ac.rca.gradesclassb.enumerations.EUserRole;
 import rw.ac.rca.gradesclassb.models.Item;
+import rw.ac.rca.gradesclassb.models.User;
 import rw.ac.rca.gradesclassb.repositories.ItemRepository;
+import rw.ac.rca.gradesclassb.services.IAuthenticationService;
+import rw.ac.rca.gradesclassb.utils.JWTAuthenticationResponse;
 import rw.ac.rca.gradesclassb.utils.TestUtil;
 
+
+@WebMvcTest(ItemController.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@RunWith(SpringRunner.class)
-//@AutoConfigureMockMvc
-@WithUserDetails("admin@gmail.com")
 class ItemControllerIntegrationTest {
-    @LocalServerPort
-    private int port;
+    
+    private static RestTemplate restTemplate;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private IAuthenticationService authenticationService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -41,10 +46,34 @@ class ItemControllerIntegrationTest {
     @Autowired
     private ItemRepository itemRepository;
 
+    String authToken;
+
+    @BeforeAll
+    public static void init() {
+        restTemplate = new RestTemplate();
+        CreateUserDTO  createUserDTO = new CreateUserDTO("Admin","User", EGender.FEMALE,"admin@gmail.com","+250788683008","Admin@2023", EUserRole.ADMIN);
+        ResponseEntity<User> createUser = restTemplate.postForEntity("/api/v1/auth/signup",
+                createUserDTO, User.class);
+        //log.info("user is saved with code {}, id:{}",createUser.getStatusCode(),createUser.getBody().getId());
+    }
+    @BeforeEach
+    void setup() throws Exception {
+        ResponseEntity<JWTAuthenticationResponse> response = restTemplate.postForEntity("/api/v1/auth/login",
+                new SignInDTO("admin@gmail.com","Admin@2023"), JWTAuthenticationResponse.class);
+        // Extract the JWT token from the signup response
+        authToken = response.getBody().getAccessToken();
+        //log.info("token used is.."+authToken);
+    }
     @Test
     void testGetAllItems() {
-        ResponseEntity<List> response = restTemplate.getForEntity(createURLWithPort("/all-items"), List.class);
+        ResponseEntity<JWTAuthenticationResponse> token = restTemplate.postForEntity("/api/v1/auth/login",
+                new SignInDTO("admin@gmail.com","Admin@2023"), JWTAuthenticationResponse.class);
 
+        ResponseEntity<List> response = restTemplate.exchange(
+                "/all-items",
+                HttpMethod.GET,
+                TestUtil.createHttpEntity(token.getBody().getAccessToken()),
+                List.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         // Add more assertions based on the expected response
     }
@@ -55,7 +84,11 @@ class ItemControllerIntegrationTest {
         UUID itemId = UUID.randomUUID();
         itemRepository.save(new Item(itemId, "Test Item", 10, 5));
 
-        ResponseEntity<Item> response = restTemplate.getForEntity(createURLWithPort("/all-items/" + itemId), Item.class);
+        ResponseEntity<Item> response = restTemplate.exchange(
+                "/all-items/" + itemId,
+                HttpMethod.GET,
+                TestUtil.createHttpEntity(authToken),
+                Item.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         // Add more assertions based on the expected response
@@ -65,7 +98,11 @@ class ItemControllerIntegrationTest {
     void testSaveItem() {
         UpdateItemDto newItem = new UpdateItemDto("New Item", 15, 3);
 
-        ResponseEntity<Item> response = restTemplate.postForEntity(createURLWithPort("/all-items"), newItem, Item.class);
+        ResponseEntity<Item> response = restTemplate.exchange(
+                "/all-items",
+                HttpMethod.POST,
+                TestUtil.createHttpEntity(newItem,authToken),
+                Item.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         // Add more assertions based on the expected response
@@ -80,17 +117,14 @@ class ItemControllerIntegrationTest {
         UpdateItemDto updateItemDto = new UpdateItemDto("Updated Item", 20, 3);
 
         ResponseEntity<Item> response = restTemplate.exchange(
-                createURLWithPort("/all-items/" + itemId),
+                "/all-items/" + itemId,
                 HttpMethod.PUT,
-                TestUtil.createHttpEntity(updateItemDto),
+                TestUtil.createHttpEntity(updateItemDto,authToken),
                 Item.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         // Add more assertions based on the expected response
     }
 
-    private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
-    }
 }
 

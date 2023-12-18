@@ -13,14 +13,12 @@ import rw.ac.rca.gradesclassb.dtos.SignInDTO;
 import rw.ac.rca.gradesclassb.exceptions.DuplicateRecordException;
 import rw.ac.rca.gradesclassb.exceptions.ResourceNotFoundException;
 import rw.ac.rca.gradesclassb.models.User;
-import rw.ac.rca.gradesclassb.security.JwtTokenProvider;
 import rw.ac.rca.gradesclassb.services.IAuthenticationService;
 import rw.ac.rca.gradesclassb.services.IUserService;
 import rw.ac.rca.gradesclassb.utils.JWTAuthenticationResponse;
 
 @RestController
 @RequestMapping (path = "/api/v1/auth")
-@Deprecated
 public class AuthenticationController {
 
     private final IUserService userService;

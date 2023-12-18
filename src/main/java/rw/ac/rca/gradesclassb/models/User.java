@@ -8,10 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.security.core.GrantedAuthority;
 import rw.ac.rca.gradesclassb.dtos.CreateUserDTO;
 import rw.ac.rca.gradesclassb.enumerations.EGender;
 import rw.ac.rca.gradesclassb.enumerations.EStatus;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -87,6 +89,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    @JsonIgnore
+    @Transient
+    private Collection<GrantedAuthority> authorities;
 
     public User(CreateUserDTO dto) {
         this.email = dto.getEmailAddress();

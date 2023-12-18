@@ -18,4 +18,23 @@ public class TestUtil {
 
         return requestEntity;
     }
+    public static HttpEntity<UpdateItemDto> createHttpEntity(UpdateItemDto updateItemDto, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        // Add headers if needed
+        headers.setBearerAuth(token);
+        // Create an HttpEntity with the new item data and headers
+        HttpEntity<UpdateItemDto> requestEntity = new HttpEntity<>(updateItemDto, headers);
+
+        return requestEntity;
+    }
+
+    public static HttpEntity<Void> createHttpEntity( String token) {
+        HttpHeaders headers = new HttpHeaders();
+        // Add headers if needed
+        headers.setBearerAuth(token);
+        // Create an HttpEntity with the new item data and headers
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        return requestEntity;
+    }
 }

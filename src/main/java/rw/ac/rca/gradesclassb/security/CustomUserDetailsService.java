@@ -27,6 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return UserPrincipal.create(user);
     }
 
+
     @Transactional
     public UserDetails loadUserByUsername(String s) throws BadRequestAlertException {
         User user = userRepository.findByEmailOrPhoneNumber(s, s).orElseThrow(() -> new UsernameNotFoundException("user not found with email or mobile of " + s));
